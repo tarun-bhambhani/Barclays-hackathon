@@ -1,14 +1,11 @@
 package com.barclays.store.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import lombok.Data;
+
+import javax.persistence.*;
 
 @Entity
+@Data
 public class Cart {
 	
 	@Id
@@ -16,7 +13,7 @@ public class Cart {
 	private Integer cartId;
 	
 	@OneToOne(cascade=CascadeType.DETACH)
-	@JoinColumn(name="PRODUCT_ID")
+	@JoinColumn(name="product_id")
 	private Product product;
 
 	private Integer quantity;
