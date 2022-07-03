@@ -1,0 +1,7 @@
+.hoverable {
+    width: 815px
+}
+
+.hoverable:hover{
+    width: 900px;
+}

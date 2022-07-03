@@ -1,0 +1,210 @@
+<h1 class="text-center display-4 text-white m-3">Order Report</h1>
+<div class="container" *ngIf=placedOrders>
+    <div class="card text-dark border-dark small">
+        <div class="card-header bg-dark text-white">
+            <h3>Order Number: {{placedOrders[0].orderNumber}}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+
+                <div class="col-5">
+
+                    <h4>Shipping Address</h4>
+                    <table class="table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><strong>Address Line 1: </strong></td>
+                                <td>{{address.addressLine1}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Address Line 2: </strong></td>
+                                <td>{{address.addressLine2}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>City/ State: </strong></td>
+                                <td>{{address.city}} / {{address.state}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pin: </strong></td>
+                                <td>{{address.pin}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Contact No: </strong></td>
+                                <td>{{address.contactNumber}}</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <table  class="mt-3">
+                    <tbody>
+                        <tr>
+                            <td><strong> Date of Orders: </strong></td>
+                            <td>{{placedOrders[0].dateOfOrder.toLocaleString()}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Method: </strong></td>
+                            <td>{{placedOrders[0].paymentThrough}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Grand Total: </strong></td>
+                            <td>{{grandTotal}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-center" *ngIf="placedOrders[0].paymentThrough != 'Cash On Delivery'"><button
+                class="btn btn-dark" data-toggle="modal" data-target="#example-modal">Generate Invoice</button></div>
+    </div>
+    <br>
+    <div *ngFor="let order of placedOrders">
+        <div class="card text-dark " [ngClass]="order.errorMessage? 'border-warning':'border-success'">
+            <div *ngIf="order.errorMessage">
+                <span class="text-warning">{{order.errorMessage}}</span>
+            </div>
+            <div class="row">
+                <div class="col-5 ">
+                    <img [src]="'assets/resources/'+ order.product.productId+'.jpg'"
+                        class="img-responsive center-block img-thumbnail" alt="Not Found"
+                        onError="this.src='assets/resources/404.png'">
+                </div>
+                <div class="offset-1 col-5">
+                    
+                    <table>
+                        <tbody class="px-1">
+                            <tr>
+                                <td><strong>Product Name:</strong></td>
+                                <td>{{order.product.name}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Brand:</strong></td>
+                                <td>{{order.product.brand}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Price:</strong></td>
+                                <td>{{order.product.price}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Discounted Price:</strong></td>
+                                <td>{{order.product.price-(order.product.discount*order.product.price)/100}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quantity:</strong></td>
+                                <td>{{order.quantity}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Price:</strong></td>
+                                <td>{{order.totalPrice}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <br>
+    </div>
+    <div class="text-center" *ngIf="placedOrders[0].paymentThrough != 'Cash On Delivery'"><button class="btn btn-dark"
+            data-toggle="modal" data-target="#example-modal">Generate Invoice</button></div>
+    <div class="modal fade" id="example-modal">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Here is you Invoice</h5>
+                    <button class="close" data-dismiss="modal">X</button>
+                </div>
+                <div class="modal-body" id="content" #content>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <h4 class="display-4">E Kart</h4>
+                            </div>
+                            <div class="col-6 text-right mt-2">
+                                <h4>Tax Invoice/ Bill Of Order</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <h6>Shipping Address</h6>
+
+                                <ul class="text-left list-group" style="list-style-type:none">
+                                    <li>{{address.addressLine1}}</li>
+                                    <li>{{address.addressLine2}}, {{address.city}}</li>
+
+                                    <li>{{address.state}}, PIN: {{address.pin}}</li>
+                                    <li></li>
+                                    <li>{{address.contactNumber}}</li>
+                                </ul>
+
+                            </div>
+                            <div class="col-6 text-right">
+                                <h6>Billing Address</h6>
+                                <ul class="text-right list-group" style="list-style-type:none">
+                                    <li>{{address.addressLine1}}</li>
+                                    <li>{{address.addressLine2}}, {{address.city}}</li>
+
+                                    <li>{{address.state}}, PIN: {{address.pin}}</li>
+                                    <li></li>
+                                    <li>{{address.contactNumber}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row mb-5">
+                            <div class="col-6">
+                                <strong>Order Number: </strong>{{placedOrders[0].orderNumber}}<br>
+                                <strong>Order Date and Time: </strong>{{placedOrders[0].dateOfOrder | date : 'medium'}}
+                            </div>
+                            <div class="col-6 text-right">
+                                <strong>Customer Email: </strong>{{cust.emailId}} <br>
+                                <strong>Customer Contact: </strong>{{cust.phoneNumber}}
+                            </div>
+
+                        </div>
+                        <table class="table table-borderless">
+                            <thead class="thead">
+                                <tr>
+                                    <th>Product Id</th>
+                                    <th>Product Name</th>
+                                    <th>Brand</th>
+                                    <th>Price per piece</th>
+                                    <th>Discounted Amount</th>
+                                    <th>Qty</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr *ngFor="let order of placedOrders; let i = index;">
+                                    <td>{{order.product.productId}}</td>
+                                    <td>{{order.product.name}}</td>
+                                    <td>{{order.product.brand}}</td>
+                                    <td>{{order.product.price}}</td>
+                                    <td>{{order.product.price-(order.product.discount*order.product.price)/100}}</td>
+                                    <td>{{order.quantity}}</td>
+                                    <td>{{order.totalPrice}}</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-6 text-left">
+                                <h5 class="ml-2">Grand Total</h5>
+                            </div>
+                            <div class="col-6 text-right">
+                                <h5 class="mr-2">{{grandTotal}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" (click)="savePDF(placedOrders[0].orderNumber)">Download
+                        Invoice</button>
+                </div>
+            </div>
+        </div>
+    </div>

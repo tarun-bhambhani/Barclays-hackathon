@@ -1,0 +1,263 @@
+<h1 class="text-center display-4 text-white mt-2 mb-5">Order List</h1>
+<div *ngIf="flag && invoiceStatusMap" class="container">
+    <div *ngFor="let orderList of placedOrders.slice().reverse() | paginate: {itemsPerPage:10, currentPage:page, totalItems:totalItems}; let i = index;"
+        class="m-4">
+        <div class="card text-dark small " style="box-shadow: 2em;"
+            [ngClass]="orderList[0].orderStatus=='DELIVERED'? 'border-success':'border-dark'">
+
+            <div class="card-head bg-dark text-light pointer" (click)="statusMap.set(orderList[0].orderNumber, !statusMap.get(orderList[0].orderNumber))">
+                <div class="row ">
+                        <div class="col-3">
+                                <p class="font-weight-bold mb-sm text-center">Order Date &
+                                    Time:<br>{{orderList[0].dateOfOrder|date}}<br>{{orderList[0].dateOfOrder|date:'shortTime':'+0530'}}
+                                </p>
+                            </div>
+                            <!-- <div class="col-3"><p  class="font-weight-bold text-center">Order Id:<br>{{orderList[0].orderId}}</p></div> -->
+                            <div class="col-3">
+                                <p class="font-weight-bold text-center">Order Number:<br>{{orderList[0].orderNumber}}</p>
+                            </div>
+                            <!-- <div class="col-3"*ngIf="order.orderStatus == 'DELIVERED'" ><p  class="font-weight-bold text-center">Delivery Date & Time:<br> {{order.dataOfDelivery|date}}<br>{{order.dataOfDelivery|date:'shortTime':'+1100'}}</p></div> -->
+                            <div class="col-3">
+                                <div *ngIf="showCard">
+                                    <ul style="list-style-type:none">
+                                        <li class="font-weight-bold"> Shipping Address:</li>
+                                        <li>{{addresses.get(orderList[0].addressId).addressLine1}}</li>
+                                        <li>{{addresses.get(orderList[0].addressId).addressLine2}}</li>
+                                        <li>{{addresses.get(orderList[0].addressId).city}},{{addresses.get(orderList[0].addressId).state}}
+                                        </li>
+                                        <li>{{addresses.get(orderList[0].addressId).pin}}</li>
+                                        <li>{{addresses.get(orderList[0].addressId).contactNumber}}</li>
+                                    </ul>
+                                </div>
+                                <div *ngIf="!showCard">
+                                    <strong>Products:</strong>
+                                    <div *ngFor="let order of orderMap.get(orderList[0].orderNumber)">
+                                        <strong>{{order.product.name}}</strong><br>
+                                    </div>
+                                </div>
+        
+                            </div>
+                    <div class="text-center col-3">
+                        <div *ngIf='invoiceStatusMap.get(orderList[0].orderNumber)'>
+                                <button class="btn btn-light m-3" data-target="#example-modal" data-toggle="modal"
+                                (click)='generateInvoice(orderList)' style="z-index:1">Generate
+                                Invoice</button><br>
+                        </div>
+                        <button class="btn btn-light m-3">Show
+                            Products</button>
+                    </div>
+
+
+                </div>
+                <!-- <div class="card-footer">Grand Total:{{orderTotal)}}</div> -->
+            </div>
+            <div *ngIf="statusMap.get(orderList[0].orderNumber)">
+                <div *ngFor="let order of orderMap.get(orderList[0].orderNumber)">
+                    <div class="card-body bg-light">
+                        <div class="row">
+                            <div class="col-3 text-center">
+                                <img [src]="'assets/resources/'+ order.product.productId+'.jpg'"
+                                    class="img-responsive center-block  img-thumbnail" alt="Not Found"
+                                    onError="this.src='assets/resources/404.png'">
+                            </div>
+
+                            <div class="col-6">
+
+                                <table class="table table-borderless table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <h5>Order Id:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.orderId}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Order Status:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.orderStatus|orderStatus}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Product Name:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.product.name}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Product Brand:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.product.brand}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Quantity:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.quantity}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Total Price:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>Total Price: {{order.totalPrice}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h5>Payment Method:</h5>
+                                            </td>
+                                            <td>
+                                                <h6>{{order.paymentThrough| paymentThrough}}</h6>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+
+                                </table>
+                            </div>
+                            <div class="col-3" *ngIf="order.orderStatus!='DELIVERED' && order.orderStatus!='CANCELLED' && order.orderStatus!='RETURNED'">
+                                <button class="btn btn-outline-danger mt-5 p-2"
+                                    (click)="cancelOrder(order.orderNumber, order.orderId)">Cancel Order</button>
+                                <div *ngIf="order.errorMessage">
+                                    <span class="text-warning">{{order.errorMessage}}</span>
+                                </div>
+                            </div>
+                            <div class="col-3" *ngIf="order.orderStatus=='DELIVERED'">
+                                <h6>Date and Time of Delivery:</h6><br>
+                                <h6>{{order.dataOfDelivery|date}}</h6><br>
+                                <h6>{{order.dataOfDelivery|date:'shortTime'}}</h6>
+                            </div>
+
+                        </div>
+
+                        <br>
+                    </div>
+
+                </div>
+                 
+            </div>
+
+        </div>
+    </div>
+
+    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+    <div *ngIf="invoiceOrderList && invoiceOrderList.length !=0">
+        <div class="modal fade" id="example-modal">
+            <div class="modal-dialog  modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Here is you Invoice</h5>
+                        <button class="close" data-dismiss="modal">X</button>
+                    </div>
+                    <div class="modal-body" id="content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <h4 class="display-4">E Kart</h4>
+                                </div>
+                                <div class="col-6 text-right mt-2">
+                                    <h4>Tax Invoice/ Bill Of Order</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <h6>Shipping Address</h6>
+
+                                    <ul class="text-left list-group" style="list-style-type:none">
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).addressLine1}}</li>
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).addressLine2}}
+                                            {{addresses.get(invoiceOrderList[0].addressId).city}}</li>
+
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).state}}, PIN:
+                                            {{addresses.get(invoiceOrderList[0].addressId).pin}}</li>
+                                        <li></li>
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).contactNumber}}</li>
+                                    </ul>
+
+                                </div>
+                                <div class="col-6 text-right">
+                                    <h6>Billing Address</h6>
+                                    <ul class="text-right list-group" style="list-style-type:none">
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).addressLine1}}</li>
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).addressLine2}},
+                                            {{addresses.get(invoiceOrderList[0].addressId).city}}</li>
+
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).state}}, PIN:
+                                            {{addresses.get(invoiceOrderList[0].addressId).pin}}</li>
+                                        <li></li>
+                                        <li>{{addresses.get(invoiceOrderList[0].addressId).contactNumber}}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="row mb-5">
+                                <div class="col-6">
+                                    <strong>Order Number: </strong>{{invoiceOrderList[0].orderNumber}}<br>
+                                    <strong>Order Date and Time:
+                                    </strong>{{invoiceOrderList[0].dateOfOrder | date : 'medium'}}
+                                </div>
+                                <div class="col-6 text-right">
+                                    <strong>Customer Email: </strong>{{customer.emailId}} <br>
+                                    <strong>Customer Contact: </strong>{{customer.phoneNumber}}
+                                </div>
+
+                            </div>
+                            <table class="table">
+                                <thead class="thead">
+                                    <tr>
+                                        <th>Product Id</th>
+                                        <th>Product Name</th>
+                                        <th>Brand</th>
+                                        <th>Price per piece</th>
+                                        <th>Discounted Amount</th>
+                                        <th>Qty</th>
+                                        <th>Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let order of invoiceOrderList">
+                                        <td>{{order.product.productId}}</td>
+                                        <td>{{order.product.name}}</td>
+                                        <td>{{order.product.brand}}</td>
+                                        <td>{{order.product.price}}</td>
+                                        <td>{{order.product.price-(order.product.discount*order.product.price)/100}}</td>
+                                        <td>{{order.quantity}}</td>
+                                        <td>{{order.totalPrice}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <h5 class="ml-2">Grand Total</h5>
+                                </div>
+                                <div class="col-6 text-right">
+                                    <h5 class="mr-2">{{orderTotal}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" (click) = "savePDF(invoiceOrderList[0].orderNumber)">Download Invoice</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div *ngIf="!flag" class="text-warning">
+        <h3 class="display-4">Loading orders...........</h3>
+    </div>

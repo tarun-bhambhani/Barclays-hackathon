@@ -1,0 +1,36 @@
+<div class="row mb-5">
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark nav-fill w-100">
+        <div class="container">
+            <a class="navbar-brand" href="#"><img src="assets/images/cart.png" class="logo" alt="" srcset=""> EKart</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item px-1 mr-2 rounded">
+                        <a routerLink="/" class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item px-1 mr-2 rounded">
+                        <a routerLink="/" class="nav-link">About Us</a>
+                    </li>
+                    <li class="nav-item px-1 rounded active">
+                        <a routerLink="/seller" routerLinkActive="active" class="nav-link">Sell Your Products</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class=" row p-4"></div>
+<div>
+    <router-outlet></router-outlet>
+</div>
+
+<div class=" row p-5"></div>
+
+<div class="row footer bg-dark mt-4 p-3">
+    <div class="container">
+        <div class="display-4 text-white text-center">footer section</div>
+    </div>
+</div>

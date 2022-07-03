@@ -1,0 +1,125 @@
+<div *ngIf="!placedOrders" class="container">
+    <!-- {{sharedAddress|json}} -->
+    <h3 class="display-4 text-white mb-2">Select a payment option</h3>
+    <input class="btn btn-dark btn-lg mb-2 mr-2" type="button" value="Back to select shipping address" routerLink="../address">
+    <button class="btn btn-dark btn-lg mb-2" (click)="addNewCard()">Add New Card</button>
+    <br>
+    <div class="card mb-4 bg-transparent border-white text-white" *ngIf="cardToAdd!=null">
+        <div class="card-header text-center border-white">
+            <h4>Add new Address</h4>
+        </div>
+        <div class="card-body">
+            <form class="form" #addForm="ngForm">
+                <div class="form-group">
+                    <label for="cardType">Card Type</label>
+                    <select required #cardType="ngModel" id="cardType" name="cardType" class="form-control" [(ngModel)]="cardToAdd.cardType">
+                        <option value="DEBIT_CARD">Debit Card</option>
+                        <option value="CREDIT_CARD">Credit Card</option>
+                    </select>
+                    <div class="field-error-message" *ngIf="cardType.invalid && cardType.dirty">
+                        Card Type is mandatory
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" pattern="[0-9]{16}" name="cardNumber" class="form-control" id="cardNumber"
+                        [(ngModel)]="cardToAdd.cardNumber" required #cardNumber="ngModel">
+                    <div class="field-error-message" *ngIf="cardNumber.invalid && cardNumber.dirty">
+                        Card Number must be of 16 digits
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="password" pattern="[0-9]{3}" name="cvv" class="form-control" id="cvv" [(ngModel)]="cardToAdd.cvv" required
+                        #cvv="ngModel">
+                    <div class="field-error-message" *ngIf="cvv.invalid && cvv.dirty">
+                        CVV must be of 3 digits
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="month" inputDateValidator name="expiryDate" class="form-control" id="expiryDate" [(ngModel)]="cardExpiryDate"
+                        required #expiryDate="ngModel">
+                    <div class="field-error-message" *ngIf="expiryDate.hasError('invalidDate') && expiryDate.dirty">
+                        Expiry Date must be a future date
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name on card</label>
+                    <input type="text" name="name" pattern="([a-zA-Z]+)( [A-Za-z]+)*" class="form-control" id="name"
+                        [(ngModel)]="cardToAdd.name" required #name="ngModel">
+                    <div class="field-error-message" *ngIf="name.invalid && name.dirty">
+                        Name is mandatory and should be only alphabets and spaces
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success" [disabled]="addForm.invalid" (click)="addCard()">Add</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-info" (click)="cancelAdd()">Cancel</button><br><br>
+                    <button class="btn btn-info" (click)="proceed()" [disabled]="addForm.invalid" routerLink="../invoice">Proceed without saving</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div *ngFor="let card of cards"  style="display:inline-block;" (click)="sharedCard = card" (click)="verifyCVVErrorMessage = null">
+        <div class="card border-primary hoverable p-4 mr-1 pointer" [ngClass]="sharedCard==card?'bg-dark text-white':'bg-light text-dark'" (click) = "sharedCard=card"  (click)="isCashOnDelivery = false">
+            <div class="row">
+                <div class="col card-block">
+                    <table>
+                        <tr>
+                            <th>Card Number: </th>
+                            <td>{{card.cardNumber}}</td>
+                        </tr>
+                        <tr>
+                            <th>Card Type: </th>
+                            <td>{{card.cardType}}</td>
+                        </tr>
+                        <tr>
+                            <th>Expiry Date: </th>
+                            <td>{{card.expiryDate|expiryDate}}</td>
+                        </tr>
+                        <tr>
+                            <th>Name on Card: </th>
+                            <td>{{card.name}}</td>
+                        </tr>
+                        <div *ngIf="card == sharedCard">
+                                <input type="password" pattern="[0-9]{3}" placeholder="CVV" name="verifyCVV" class="form-control" id="verifyCVV" [(ngModel)]="card.cvv" required #verifyCVV="ngModel">
+                                <span class="field-error-message" *ngIf="verifyCVV.invalid && verifyCVV.dirty">
+                                    CVV must be of 3 digits
+                                </span>
+                                <span class="field-error-message">{{verifyCVVErrorMessage}}</span>
+                        </div>
+                    </table>
+                    <button class="btn btn-danger btn-sm" (click)="deleteCard(card)">Delete&nbsp;</button>
+                </div>
+                <!-- <div class="col card"> -->
+                    
+                            <!-- <input type="number" placeholder="Enter CVV" [(ngModel)]="card.cvv">
+                            <span class="text-danger">{{verifyCVVErrorMessage}}</span> -->
+                            <!-- <strong>Enter CVV</strong>
+                            <div class="form-group-inline"> -->
+                                
+                                
+                            <!-- </div> -->
+                   
+                   
+                <!-- </div> -->
+            </div>
+        </div>
+        <br>
+    </div>
+    <div class="card border-primary hoverable w-75 pointer" [ngClass]="isCashOnDelivery==true?'bg-dark text-white':'bg-light text-dark'"  (click)="isCashOnDelivery = true">
+        <div class="row" (click)="sharedCard = null">
+            <div class="col card-block offset-1">
+                <div class="card-body">
+                    <strong>Cash On Delivery</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <input class="btn btn-dark btn-lg" type="submit" value="Place Order" (click)="placeOrder()" [disabled]="(sharedCard == null && isCashOnDelivery == false) || validateCVV()">&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
+<div *ngIf="placedOrders">
+    <!-- <app-checkout-invoice [placedOrders]="sharedOrders" [card]="sharedCard"></app-checkout-invoice> -->
+    <router-outlet></router-outlet>
+</div>

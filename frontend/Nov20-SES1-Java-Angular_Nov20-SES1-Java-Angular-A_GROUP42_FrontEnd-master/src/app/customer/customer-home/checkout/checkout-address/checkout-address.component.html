@@ -1,0 +1,137 @@
+<div *ngIf="!continue">
+    <!-- {{dataService.getAddress()|json}} -->
+    <div class="container">
+        <h1 class="display-4 text-white">Select shipping address</h1>
+        <div class="containe-fluid ">
+            <div class="row ">
+                    <div class="col-2 text-center"><input class="btn btn-dark btn-lg" type="button" value="Back to cart" routerLink="../../cart">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    <div class="offset-1 col-2 text-center"><input type="button" class="btn btn-lg btn-dark mr-5" value="Continue" (click)="continue=!continue"
+                        [disabled]="dataService.getAddress() == null" routerLink="../card"></div>
+                    <div class="offset-1 col-3 text-left"><button class="btn btn-dark btn-lg" (click)="addNewAddress()">Add New Address</button></div>
+            </div>
+        </div>
+        <br>
+        <div class="row" *ngIf="addressToAdd!=null">
+            <div class="col-9">
+
+                <div class="card mb-4 bg-transparent border-white text-white">
+                    <div class="card-header text-center border-white">
+                        <h4>Add new Address</h4>
+                    </div>
+                    <div class="card-body">
+                        <form class="form" #addForm="ngForm">
+                            <div class="form-group">
+                                <label for="addressLine1">Address Lane 1</label>
+                                <input type="text" name="addressLine1" class="form-control" id="addressLine1"
+                                    [(ngModel)]="addressToAdd.addressLine1" required #addressLine1="ngModel">
+                                <div class="field-error-message" *ngIf="addressLine1.invalid && addressLine1.dirty">
+                                    Address Lane is mandatory
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="addressLine2">Address Lane 2</label>
+                                <input type="text" name="addressLine2" class="form-control" id="addressLine2"
+                                    [(ngModel)]="addressToAdd.addressLine2" required #addressLine2="ngModel">
+                                <div class="field-error-message" *ngIf="addressLine2.invalid && addressLine2.dirty">
+                                    Address Lane is mandatory
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" name="city" class="form-control" id="city"
+                                    [(ngModel)]="addressToAdd.city" required #city="ngModel">
+                                <div class="field-error-message" *ngIf="city.invalid && city.dirty">
+                                    City is mandatory
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" name="state" class="form-control" id="state"
+                                    [(ngModel)]="addressToAdd.state" required #state="ngModel">
+                                <div class="field-error-message" *ngIf="state.invalid && state.dirty">
+                                    State is mandatory
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="pin">Pin code</label>
+                                <input type="text" name="pin" pattern="[0-9]{6}" class="form-control" id="pin"
+                                    [(ngModel)]="addressToAdd.pin" required #pin="ngModel">
+                                <div class="field-error-message" *ngIf="pin.invalid && pin.dirty">
+                                    Pin is mandatory and should be 6 digits
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactNumber">Phone Number</label>
+                                <input type="text" name="contactNumber" pattern="[0-9]{10}" class="form-control"
+                                    id="contactNumber" [(ngModel)]="addressToAdd.contactNumber" required
+                                    #contactNumber="ngModel">
+                                <div class="field-error-message" *ngIf="contactNumber.invalid && contactNumber.dirty">
+                                    Contact number is mandatory and should be 10 digits
+                                </div>
+                            </div>
+
+                            <div class="form-group text-right">
+                                <button class="btn btn-dark px-5" [disabled]="addForm.invalid"
+                                    (click)="addAddress()">Add</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button class="btn btn-dark px-5 mr-4" (click)="cancelAdd()">Cancel</button>
+                                <button class="btn btn-dark px-5" (click)="proceed(addressToAdd)"
+                                    [disabled]="addForm.invalid" (click)="continue=!continue"
+                                    routerLink="../card">Proceed without saving</button>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+                </div>
+                <h5 class="error-message">{{errorMessage}}</h5>
+                <h5 class="success-message">{{successMessage}}</h5>
+
+            </div>
+        </div>
+        <div *ngFor="let address of addresses" >
+
+            <div #card class="border-primary hoverable pointer" 
+                  (click)="selectAddress(address)" [ngClass]="selectedAddress==address?'bg-dark text-white':'card text-dark'">
+                <div class="card-body">
+                        <div class="row address-card">
+                            <div class="col-sm-6 col-md-5">
+                                <strong>Address Line 1:</strong><br>
+                                <strong>Address Line 2:</strong><br>
+                                <strong>City:</strong><br>
+                                <strong>State: </strong><br>
+                                <strong>Pin:</strong><br>
+                                <strong>Contact No: </strong>
+                            </div>
+                            <div class="col-sm-6 col-md-5 text-left">
+                                <strong>{{address.addressLine1}}</strong> <br>
+                                <strong>{{address.addressLine2}}</strong> <br>
+                                <strong>{{address.city}}</strong> <br>
+                                <strong>{{address.state}}</strong><br>
+                                <strong>{{address.pin}}</strong> <br>
+                                <strong>{{address.contactNumber}}</strong>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-danger btn-sm" (click)="deleteAddress(address)">Delete&nbsp;</button>
+                        </div>
+                </div>
+               
+
+            </div>
+            <br>
+        </div>
+        <div>
+            <input *ngIf="addresses.length > 2" type="button" class="btn btn-lg btn-dark mr-5" value="Continue"
+                (click)="continue=!continue" [disabled]="dataService.getAddress() == null" routerLink="../card">
+            <!-- <div class=" container text-right w-50">         
+           
+    </div> -->
+
+        </div>
+    </div>
+</div>
+<div *ngIf="continue">
+    <!-- <app-checkout-card [address]="dataService.getAddress()"></app-checkout-card> -->
+    <router-outlet></router-outlet>
+</div>

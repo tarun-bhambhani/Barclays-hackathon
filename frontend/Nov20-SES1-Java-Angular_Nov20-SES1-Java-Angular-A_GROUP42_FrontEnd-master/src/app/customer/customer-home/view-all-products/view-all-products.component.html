@@ -1,0 +1,145 @@
+<!-- <div class="row" style="padding: 15px">
+  <div class="col-md-10 offset-md-1">
+    <div class="input-group mb-3">
+      <input (keyup)="search()" type="text" class="form-control" placeholder="Search using product name or brand.."
+        [(ngModel)]="searchText">
+      <div class="input-group-btn">
+        <button class="btn btn-success" (click)="search()" type="button">Search</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<div *ngIf="productListToDisplay.length!=null && productListToDisplay.length>0">
+  <div *ngIf="!viewDetails">
+
+    <div class="row">
+      <div class="card-group">
+        <div *ngFor="let product of productListToDisplay">
+          <a [routerLink]="" class="nav-link" (click)="setSelectedProduct(product)">
+
+            <div class="card hoverable">
+              <div class="card-header text-white bg-info">
+                <div class="text-truncate">{{product.brand+" - "+product.name}}</div>
+              </div>
+              <div class="card-body">
+                <div class="image-box">
+                  <img [src]="'assets/resources/'+ product.productId+'.jpg'" class="img-responsive center-block"
+                    alt="Image Not Found" onError="this.src='assets/resources/404.png'">
+                </div>
+              </div>
+              <div class="card-footer">
+                 Rs. is used instead of currency pipe due to support issue //////// 
+                <span class="success-message">
+                  <p>
+                    <strong>Rs.{{product.maximum_retail_price * (1-product.discountPercent/100)|number:'1.2-2'}}</strong>
+                    <span class="field-error-message">
+                      <del>Rs.{{product.maximum_retail_price |number:'1.2-2'}}</del>
+                    </span>
+                  </p>
+                  <strong>{{product.discountPercent/100 | percent}} OFF</strong>
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div> 
+<div *ngIf="productListToDisplay.length==0">
+    <div class="field-error-message">No products available!!</div>
+  </div>
+  <div *ngIf="viewDetails">
+    <div class="row">
+      <div class="col-md-2">
+        <a [routerLink]="" (click)="viewDetails=false" class="btn btn-dark">
+          Back
+        </a>
+      </div>
+    </div>
+    <br>
+    <customer-product-details [selectedProduct]="selectedProduct"></customer-product-details>
+  </div> -->
+
+
+<!--New Product Temlpate-->
+<div *ngIf="viewDetails" class="container" >
+    <customer-product-details [selectedProduct]="selectedProduct"></customer-product-details>
+    <div class="row mt-2">
+      <div class="text-right col-md-9">
+        <a [routerLink]="" (click)="viewDetails=false" class="btn btn-lg btn-dark px-5">
+          Return
+        </a>
+      </div>
+    </div>
+    <br>
+    
+  </div>
+<div *ngIf="!viewDetails" >
+<div class="row" style="height: 96vh">
+  <div class="col-md-2 bg-secondary">
+    <ul class="list-group list-group-flush text-white mt-5" (click)="search()" style="cursor:pointer;">
+      <li class="list-group-item bg-transparent"><strong>Choose Category</strong></li>
+      <li (click) = "searchText=''" class="list-group-item bg-transparent">All</li>
+      <li (click) = "searchText='mobile'" class="list-group-item bg-transparent">Phone</li>
+      <li (click) = "searchText='laptop'" class="list-group-item bg-transparent">Laptop</li>
+      <li (click) = "searchText='Clothing - Men'" class="list-group-item bg-transparent">Men Clothing</li>
+      <li (click) = "searchText='Clothing - Women'" class="list-group-item bg-transparent">Women Clothing</li>
+      <li (click) = "searchText='camera'" class="list-group-item bg-transparent">Cameras</li>
+      <li (click) = "searchText='home'" class="list-group-item bg-transparent">Home</li>
+      <li (click) = "searchText='sports'" class="list-group-item bg-transparent">Sports</li>
+      <li (click) = "searchText='other'" class="list-group-item bg-transparent">Others</li>
+    </ul>
+  </div>
+  <div class="col-md-10  bg-cover">
+      <div class="row mt-5" >
+          <div class="container">
+          <div class="input-group mb-3">
+            <input (keyup)="search()" type="text" class="form-control input-group-append"
+              placeholder="Search using product name or brand.." [(ngModel)]="searchText">
+            <div class="input-group-append">
+              <button class="btn btn-success"  (click)="search()" type="button">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center" *ngIf="productListToDisplay.length==0">
+          <div class="field-error-message ml-5 display-4" style="margin-top:50px">No products available!!</div>
+          <div class=" ml-5 text-white "><h6>Try entering some other search text.</h6></div>
+        </div>
+         
+      <div *ngIf="productListToDisplay.length!=null && productListToDisplay.length>0">
+    
+    <div class="row bg-cover">
+      <div class="container">
+        
+      <div class="card m-2 border border-dark" *ngFor="let product of productListToDisplay" (click)="setSelectedProduct(product)" style="width: 12rem; display:inline-block;cursor:pointer;">
+        <img [src]="'assets/resources/sample-icon.jpg'" alt="proguct image" class="card-img-top" height="190px" >
+        
+        <div class="card-body">
+          <div class="card-title">
+            <div class="text-truncate"><strong>{{product.name}}</strong></div>
+            <!-- <button class="btn btn-success btn-block">Buy</button><button class="btn btn-warning btn-block">Details</button> -->
+            <span class="success-message">
+                
+                  <strong>Rs.{{product.maximum_retail_price * (1-product.discountPercent/100)|number:'1.2-2'}}</strong><br>
+                  <span class="text-danger">
+                    <del>Rs.{{product.maximum_retail_price |number:'1.2-2'}}</del>
+                  </span>
+                
+                <strong>  {{product.discountPercent/100 | percent}} OFF</strong>
+              </span>
+          </div>
+
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
